@@ -37,7 +37,7 @@ class Block(pg.sprite.Sprite):
     def update(self):
         self.set_rect_position()
         self.is_collide(self.position)
-        self.is_collide(self.position + )
+        self.is_collide(self.position + MOVE_DIRECTIONS['DOWN'])
 
 
 class Tetromino:
