@@ -29,3 +29,5 @@ TETROMINOES = {
 INIT_POS_OFFSET = vec(FIELD_W // 2 - 1, 0)
 
 MOVE_DIRECTIONS = {'LEFT': vec(-1, 0), 'RIGHT': vec(1, 0), 'DOWN': vec(0, 1)}
+
+ANIMATION_INTERVAL = 150 # ms
