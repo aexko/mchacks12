@@ -1,0 +1,26 @@
+import random
+
+from settings import *
+
+class Block(pg.sprite.Sprite):
+    def __init__(self, tetromino, position):
+        self.tetromino = tetromino
+        self.alive = True
+
+        super().__init__(tetromino.tetris.sprite_group)
+        self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
+        self.image.fill('red')
+        self.rect = self.image.get_rect()
+        self.rect.topleft = position[0] * TILE_SIZE, position[1] * TILE_SIZE
+
+class Tetromino:
+    def __init__(self, tetris):
+        self.tetris = tetris
+        Block(self, (4, 0))
+
+    def update(self):
+        # self.tetris.update()
+        pass
+
+
+

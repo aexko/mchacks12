@@ -1,7 +1,8 @@
 import sys
 import pygame as pg
 from settings import FIELD_RES, FPS, FIELD_COLOR
-from Tetris import Tetris
+from tetris import Tetris
+
 
 class TetrisApp:
     def __init__(self):
@@ -38,6 +39,7 @@ class TetrisApp:
     def _quit_game(self):
         pg.quit()
         sys.exit()
+
 
 if __name__ == '__main__':
     TetrisApp().run()
