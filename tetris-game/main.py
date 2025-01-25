@@ -32,6 +32,7 @@ class TetrisApp:
 
     def _draw(self):
         self.screen.fill(FIELD_COLOR)
+        self.Tetris.draw()
         pg.display.flip()
 
     def _quit_game(self):
