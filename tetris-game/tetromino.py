@@ -2,6 +2,7 @@ import random
 
 from settings import *
 
+
 class Block(pg.sprite.Sprite):
     def __init__(self, tetromino, position):
         self.tetromino = tetromino
@@ -35,7 +36,6 @@ class Block(pg.sprite.Sprite):
         rotated = translated.rotate(90)
         return rotated + pivot_pos
 
-
     def update(self):
         self.set_rect_position()
         self.is_collide(self.position)
@@ -51,7 +51,6 @@ class Tetromino:
 
     def is_collide(self, block_positions):
         return any(map(Block.is_collide, self.blocks, block_positions))
-
 
     def rotate(self):
         pivot_pos = self.blocks[0].position
@@ -69,15 +68,8 @@ class Tetromino:
         if not is_collide:
             for block in self.blocks:
                 block.position += move_direction
-
-                # 10:12
-
         elif direction == 'DOWN':
             self.landing = True
 
-
     def update(self):
         self.move(direction='DOWN')
-
-
-

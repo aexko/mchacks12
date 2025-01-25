@@ -2,11 +2,11 @@ from settings import *
 import pygame as pg
 from tetromino import Tetromino
 
-
 from settings import *
 import math
 from tetromino import Tetromino
 import pygame.freetype as ft
+
 
 class Tetris:
     def __init__(self, app):
@@ -55,16 +55,3 @@ class Tetris:
     def draw(self):
         self.draw_grid()
         self.sprite_group.draw(self.app.screen)
-
-
-
-
-
-
-
-
-
-
-
-
-
