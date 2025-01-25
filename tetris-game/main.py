@@ -9,15 +9,14 @@ class TetrisApp:
         self._initialize_pygame()
         self.screen = pg.display.set_mode(FIELD_RES)
         self.clock = pg.time.Clock()
-        self.running = True
-        self.Tetris = Tetris(self)
+        self.tetris = Tetris(self)
 
     def _initialize_pygame(self):
         pg.init()
         pg.display.set_caption('Tetris')
 
     def run(self):
-        while self.running:
+        while True:
             self._handle_events()
             self._update()
             self._draw()
@@ -26,14 +25,17 @@ class TetrisApp:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self._quit_game()
+            elif event.type == pg.KEYDOWN:
+                self.tetris.control(pressed_key=event.key)
+
 
     def _update(self):
         self.clock.tick(FPS)
-        self.Tetris.update()
+        self.tetris.update()
 
     def _draw(self):
         self.screen.fill(FIELD_COLOR)
-        self.Tetris.draw()
+        self.tetris.draw()
         pg.display.flip()
 
     def _quit_game(self):
