@@ -25,14 +25,16 @@ class Block(pg.sprite.Sprite):
             return False
         return True
 
+    def sfx_run(self):
+        self.image = self.sfx_image
+        self.pos.y -= self.sfx_speed
+        self.image = pg.transform.rotate(self.image, pg.time.get_ticks() * self.sfx_speed)
 
+    def rotate(self, pivot_pos):
+        translated = self.position - pivot_pos
+        rotated = translated.rotate(90)
+        return rotated + pivot_pos
 
-    # def is_collide(self, pos):
-    #     x, y = int(pos.x), int(pos.y)
-    #     if 0 <= x < FIELD_W and y < FIELD_H and (
-    #             y < 0 or not self.tetromino.tetris.field_array[y][x]):
-    #         return False
-    #     return True
 
     def update(self):
         self.set_rect_position()
@@ -50,6 +52,14 @@ class Tetromino:
         return any(map(Block.is_collide, self.blocks, block_positions))
 
 
+    def rotate(self):
+        pivot_pos = self.blocks[0].position
+        new_block_positions = [block.rotate(pivot_pos) for block in self.blocks]
+
+        if not self.is_collide(new_block_positions):
+            for i, block in enumerate(self.blocks):
+                block.pos = new_block_positions[i]
+
     def move(self, direction):
         move_direction = MOVE_DIRECTIONS[direction]
         new_block_positions = [block.position + move_direction for block in self.blocks]
@@ -58,6 +68,11 @@ class Tetromino:
         if not is_collide:
             for block in self.blocks:
                 block.position += move_direction
+
+                # 10:12
+
+        elif direction == 'DOWN':
+            self.landing = True
 
 
     def update(self):

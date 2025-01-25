@@ -30,9 +30,14 @@ class Tetris:
         elif pressed_key == pg.K_RIGHT:
             self.tetromino.move(direction='RIGHT')
         elif pressed_key == pg.K_UP:
-            pass
+            self.tetromino.rotate()
         elif pressed_key == pg.K_DOWN:
             pass
+
+    def check_landing(self):
+        if self.tetromino.landing:
+            self.tetromino = Tetromino(self)
+
 
     def update(self):
         if self.app.anim_trigger:
