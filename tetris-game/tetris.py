@@ -42,6 +42,7 @@ class Tetris:
     def update(self):
         if self.app.anim_trigger:
             self.tetromino.update()
+            self.check_landing()
         self.sprite_group.update()
 
     def draw(self):
