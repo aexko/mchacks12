@@ -48,6 +48,7 @@ class Tetromino:
         self.shape = random.choice(list(TETROMINOES.keys()))
         self.blocks = [Block(self, pos) for pos in TETROMINOES[self.shape]]
         self.landing = False
+
     def is_collide(self, block_positions):
         return any(map(Block.is_collide, self.blocks, block_positions))
 
@@ -58,7 +59,7 @@ class Tetromino:
 
         if not self.is_collide(new_block_positions):
             for i, block in enumerate(self.blocks):
-                block.pos = new_block_positions[i]
+                block.position = new_block_positions[i]
 
     def move(self, direction):
         move_direction = MOVE_DIRECTIONS[direction]
