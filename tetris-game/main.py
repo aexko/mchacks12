@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 from settings import FIELD_RES, FPS, FIELD_COLOR
+from Tetris import Tetris
 
 class TetrisApp:
     def __init__(self):
@@ -8,6 +9,7 @@ class TetrisApp:
         self.screen = pg.display.set_mode(FIELD_RES)
         self.clock = pg.time.Clock()
         self.running = True
+        self.Tetris = Tetris(self)
 
     def _initialize_pygame(self):
         pg.init()
@@ -26,6 +28,7 @@ class TetrisApp:
 
     def _update(self):
         self.clock.tick(FPS)
+        self.Tetris.update()
 
     def _draw(self):
         self.screen.fill(FIELD_COLOR)
