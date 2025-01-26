@@ -6,9 +6,10 @@ import cv2
 import mediapipe as mp
 
 from settings import *
-from tetris import Tetris
+from tetris import *
 from camera import *
 from tetris import *
+import pathlib
 
 
 class TetrisApp:
@@ -20,6 +21,7 @@ class TetrisApp:
         self.tetris = Tetris(self)
         self.set_timer()
         self.text = Text(self)
+
 
 
         # Vitesse de descente initiale
@@ -107,6 +109,7 @@ class TetrisApp:
         self.screen.fill(color=BACKGROUND_COLOR)
         self.screen.fill(color=FIELD_COLOR, rect=(0, 0, *FIELD_RES))
         self.tetris.draw()
+        self.text.draw()
         pg.display.flip()
 
     def _quit_game(self):
