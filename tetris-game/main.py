@@ -2,7 +2,7 @@ import sys
 
 import pygame as pg
 
-from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL
+from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL
 from tetris import Tetris
 
 
@@ -26,6 +26,7 @@ class TetrisApp:
 
     def _handle_events(self):
         self.anim_trigger = False
+        self.speed_trigger = False
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self._quit_game()
@@ -33,11 +34,16 @@ class TetrisApp:
                 self.tetris.control(pressed_key=event.key)
             elif event.type == self.user_event:
                 self.anim_trigger = True
+            elif event.type == self.boost_event:
+                self.speed_trigger = True
 
     def set_timer(self):
         self.user_event = pg.USEREVENT + 0
+        self.boost_event = pg.USEREVENT + 1
         self.anim_trigger = False
+        self.boost_event = False
         pg.time.set_timer(self.user_event, ANIMATION_INTERVAL)
+        pg.time.set_timer(self.boost_event, BOOST_INTERVAL)
 
     def _update(self):
         self.clock.tick(FPS)

@@ -18,7 +18,7 @@ FIELD_RES = FIELD_W * TILE_SIZE, FIELD_H * TILE_SIZE
 TETROMINOES = {
     'T': [(0, 0), (-1, 0), (1, 0), (0, -1)],
     'O': [(0, 0), (1, 0), (0, 1), (1, 1)],
-    'J': [(0, 0), (-1, 0), (0, 1), (0, -2)],
+    'J': [(0, 0), (-1, 0), (1, 0), (1, -1)],
     'L': [(0, 0), (1, 0), (0, -1), (0, -2)],
     'I': [(0, 0), (0, 1), (0, -1), (0, -2)],
     'S': [(0, 0), (-1, 0), (0, -1), (1, -1)],
@@ -30,4 +30,5 @@ INIT_POS_OFFSET = vec(FIELD_W // 2 - 1, 0)
 
 MOVE_DIRECTIONS = {'LEFT': vec(-1, 0), 'RIGHT': vec(1, 0), 'DOWN': vec(0, 1)}
 
-ANIMATION_INTERVAL = 300  # ms
+ANIMATION_INTERVAL = 400  # ms
+BOOST_INTERVAL = 15  # ms
