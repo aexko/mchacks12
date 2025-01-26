@@ -20,7 +20,7 @@ FIELD_SCALE_W, FIELD_SCALE_H = 1.7, 1.0
 WIN_RES = WIN_W, WIN_H = FIELD_RES[0] * FIELD_SCALE_W, FIELD_RES[1] * FIELD_SCALE_H
 
 INIT_POSITION_OFFSET = (FIELD_W // 2 - 1, 0)
-NEXT_POSITION_OFFSET = (FIELD_W * 1.25, FIELD_H * 0.1)
+NEXT_POSITION_OFFSET = (FIELD_W * 1.25, FIELD_H * 0.3)
 TETROMINOES = {
     'T': [(0, 0), (-1, 0), (1, 0), (0, -1)],
     'O': [(0, 0), (1, 0), (0, 1), (1, 1)],
@@ -39,4 +39,6 @@ MOVE_DIRECTIONS = {'LEFT': vec(-1, 0), 'RIGHT': vec(1, 0), 'DOWN': vec(0, 1)}
 ANIMATION_INTERVAL = 400  # ms
 BOOST_INTERVAL = 15  # ms
 
-SPRITE_DIR_PATH = 'assets'
+SPRITE_PATH = 'assets/sprites'
+FONT_PATH = 'assets/font'
+

@@ -1,6 +1,30 @@
 from settings import *
 from tetromino import Tetromino
 from camera import *
+import pygame.freetype as ft
+
+
+class Text:
+    def __init__(self, app):
+        self.app = app
+        self.font = ft.Font(FONT_PATH)
+
+    def draw(self):
+        self.font.render_to(self.app.screen, (WIN_W * 0.595, WIN_H * 0.02), 'TETRIS', 'white', size=50 * 1.65,
+                            bgcolor='black')
+        self.font.render_to(self.app.screen, (WIN_W * 0.595, WIN_H * 0.02),
+                            text='TETRIS', fgcolor=self.get_color(),\
+                            size=TILE_SIZE * 1.65, bgcolor='black')
+        self.font.render_to(self.app.screen, (WIN_W * 0.65, WIN_H * 0.22),
+                            text='next', fgcolor='orange',
+                            size=TILE_SIZE * 1.4, bgcolor='black')
+        self.font.render_to(self.app.screen, (WIN_W * 0.64, WIN_H * 0.67),
+                            text='score', fgcolor='orange',
+                            size=TILE_SIZE * 1.4, bgcolor='black')
+        self.font.render_to(self.app.screen, (WIN_W * 0.64, WIN_H * 0.8),
+                            text=f'{self.app.tetris.score}', fgcolor='white',
+                            size=TILE_SIZE * 1.8)
+
 
 
 class Tetris:
@@ -11,6 +35,14 @@ class Tetris:
         self.tetromino = Tetromino(self)
         self.next_tetromino = Tetromino(self, current=False)
         self.boost = False
+
+        self.score = 0
+        self.full_lines = 0
+        self.points_per_lines = {0: 0, 1: 1000, 2: 3000, 3: 7000, 4: 15000}
+
+    def get_score(self):
+        self.score += self.points_per_lines[self.full_lines]
+        self.full_lines = 0
 
     # python
     def check_full_lines(self):
@@ -28,6 +60,8 @@ class Tetris:
                 for x in range(FIELD_W):
                     self.field_array[row][x].alive = False
                     self.field_array[row][x] = 0
+
+                self.full_lines += 1
 
     def put_tetromino_blocks_in_array(self):
         for block in self.tetromino.blocks:
@@ -75,6 +109,7 @@ class Tetris:
             self.check_full_lines()
             self.tetromino.update()
             self.check_landing()
+            self.get_score()
         self.sprite_group.update()
 
     def draw(self):

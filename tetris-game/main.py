@@ -19,6 +19,8 @@ class TetrisApp:
         self.images = self.load_img()
         self.tetris = Tetris(self)
         self.set_timer()
+        self.text = Text(self)
+
 
         # Vitesse de descente initiale
         self.drop_speed = 1000  # vitesse normale de descente
@@ -55,7 +57,7 @@ class TetrisApp:
         pg.display.set_caption('Tetris')
 
     def load_img(self):
-        files = [item for item in pathlib.Path(SPRITE_DIR_PATH).rglob('*.png') if item.is_file()]
+        files = [item for item in pathlib.Path(SPRITE_PATH).rglob('*.png') if item.is_file()]
         images = [pg.image.load(file).convert_alpha() for file in files]
         images = [pg.transform.scale(image, (TILE_SIZE, TILE_SIZE)) for image in images]
         return images
