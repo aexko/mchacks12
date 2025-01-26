@@ -1,11 +1,5 @@
 from settings import *
-import pygame as pg
 from tetromino import Tetromino
-
-from settings import *
-import math
-from tetromino import Tetromino
-import pygame.freetype as ft
 
 
 class Tetris:
@@ -14,6 +8,23 @@ class Tetris:
         self.sprite_group = pg.sprite.Group()
         self.field_array = self.get_field_array()
         self.tetromino = Tetromino(self)
+
+    # python
+    def check_full_lines(self):
+        row = FIELD_H - 1
+        for y in range(FIELD_H - 1, -1, -1):
+            for x in range(FIELD_W):
+                self.field_array[row][x] = self.field_array[y][x]
+
+                if self.field_array[y][x]:
+                    self.field_array[row][x].position = vec(x, y)
+
+            if sum(map(bool, self.field_array[y])) < FIELD_W:
+                row -= 1
+            else:
+                for x in range(FIELD_W):
+                    self.field_array[row][x].alive = False
+                    self.field_array[row][x] = 0
 
     def put_tetromino_blocks_in_array(self):
         for block in self.tetromino.blocks:
@@ -44,10 +55,9 @@ class Tetris:
             self.put_tetromino_blocks_in_array()
             self.tetromino = Tetromino(self)
 
-
-
     def update(self):
         if self.app.anim_trigger:
+            self.check_full_lines()
             self.tetromino.update()
             self.check_landing()
         self.sprite_group.update()

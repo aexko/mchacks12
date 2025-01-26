@@ -1,5 +1,4 @@
 import random
-import time
 
 from settings import *
 
@@ -8,7 +7,6 @@ class Block(pg.sprite.Sprite):
     def __init__(self, tetromino, position):
         self.tetromino = tetromino
         self.position = vec(position) + INIT_POS_OFFSET
-
         self.alive = True
 
         super().__init__(tetromino.tetris.sprite_group)
@@ -16,6 +14,10 @@ class Block(pg.sprite.Sprite):
         self.image.fill('red')
         self.rect = self.image.get_rect()
         self.rect.topleft = self.position * TILE_SIZE
+
+    def is_alive(self):
+        if not self.alive:
+            self.kill()
 
     def set_rect_position(self):
         self.rect.topleft = self.position * TILE_SIZE
@@ -34,8 +36,7 @@ class Block(pg.sprite.Sprite):
 
     def update(self):
         self.set_rect_position()
-        self.is_collide(self.position)
-        self.is_collide(self.position + MOVE_DIRECTIONS['DOWN'])
+        self.is_alive()
 
 
 class Tetromino:

@@ -1,5 +1,7 @@
 import sys
+
 import pygame as pg
+
 from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL
 from tetris import Tetris
 
