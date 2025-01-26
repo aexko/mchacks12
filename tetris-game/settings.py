@@ -3,7 +3,7 @@ import pygame as pg
 vec = pg.math.Vector2
 
 # FPS
-FPS = 60
+FPS = 30
 
 # BACKGROUND COLOR
 FIELD_COLOR = (0, 0, 0)
@@ -31,3 +31,4 @@ INIT_POS_OFFSET = vec(FIELD_W // 2 - 1, 0)
 MOVE_DIRECTIONS = {'LEFT': vec(-1, 0), 'RIGHT': vec(1, 0), 'DOWN': vec(0, 1)}
 
 ANIMATION_INTERVAL = 150 # ms
+

@@ -1,13 +1,11 @@
 import random
-
+import pygame as pg
 from settings import *
-
 
 class Block(pg.sprite.Sprite):
     def __init__(self, tetromino, position):
         self.tetromino = tetromino
         self.position = vec(position) + INIT_POS_OFFSET
-
         self.alive = True
 
         super().__init__(tetromino.tetris.sprite_group)
@@ -21,15 +19,9 @@ class Block(pg.sprite.Sprite):
 
     def is_collide(self, pos):
         x, y = int(pos.x), int(pos.y)
-        if 0 <= x < FIELD_W and y < FIELD_H and (
-                y < 0 or not self.tetromino.tetris.field_array[y][x]):
+        if 0 <= x < FIELD_W and y < FIELD_H and (y < 0 or not self.tetromino.tetris.field_array[y][x]):
             return False
         return True
-
-    def sfx_run(self):
-        self.image = self.sfx_image
-        self.pos.y -= self.sfx_speed
-        self.image = pg.transform.rotate(self.image, pg.time.get_ticks() * self.sfx_speed)
 
     def rotate(self, pivot_pos):
         translated = self.position - pivot_pos
