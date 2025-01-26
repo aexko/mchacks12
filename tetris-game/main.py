@@ -8,6 +8,7 @@ import mediapipe as mp
 from settings import *
 from tetris import Tetris
 from camera import *
+from tetris import *
 
 
 class TetrisApp:

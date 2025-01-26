@@ -57,7 +57,11 @@ class Tetris:
         if self.tetromino.landing:
             self.boost = False
             self.put_tetromino_blocks_in_array()
-            self.tetromino = Tetromino(self)
+            self.next_tetromino.current = True
+            self.tetromino = self.next_tetromino
+            self.next_tetromino = Tetromino(self, current=False)
+
+
 
     def update(self):
         trigger = [self.app.anim_trigger, self.app.speed_trigger][self.boost]
