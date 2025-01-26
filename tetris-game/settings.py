@@ -40,5 +40,5 @@ ANIMATION_INTERVAL = 400  # ms
 BOOST_INTERVAL = 15  # ms
 
 SPRITE_PATH = 'assets/sprites'
-FONT_PATH = 'assets/font'
+FONT_PATH = 'assets/font/Library3amsoft.otf'
 
