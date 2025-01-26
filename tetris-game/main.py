@@ -11,7 +11,6 @@ from camera import *
 from tetris import *
 
 
-
 class TetrisApp:
     def __init__(self):
         self._initialize_pygame()
@@ -39,9 +38,17 @@ class TetrisApp:
         self.right_block_time = 0
         self.translation_delay = 0.5  # Delay for translation (seconds)
 
+        # Variables pour la détection de la rotation
+        self.last_rotation_time = time.time()
+        self.rotation_delay = 1.0  # Minimum delay between rotations (seconds)
+
     def set_timer(self):
         self.user_event = pg.USEREVENT + 0
+        self.boost_event = pg.USEREVENT + 1
+        self.anim_trigger = False
+        self.boost_event = False
         pg.time.set_timer(self.user_event, ANIMATION_INTERVAL)
+        pg.time.set_timer(self.boost_event, BOOST_INTERVAL)
 
     def _initialize_pygame(self):
         pg.init()
@@ -57,7 +64,14 @@ class TetrisApp:
         while True:
             self._handle_events()
             self._update()
+            self.detect_gestures()
             self._draw()
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        self.cap.release()
+        cv2.destroyAllWindows()
 
     def _handle_events(self):
         self.anim_trigger = False
@@ -71,14 +85,6 @@ class TetrisApp:
                 self.anim_trigger = True
             elif event.type == self.boost_event:
                 self.speed_trigger = True
-
-    def set_timer(self):
-        self.user_event = pg.USEREVENT + 0
-        self.boost_event = pg.USEREVENT + 1
-        self.anim_trigger = False
-        self.boost_event = False
-        pg.time.set_timer(self.user_event, ANIMATION_INTERVAL)
-        pg.time.set_timer(self.boost_event, BOOST_INTERVAL)
 
     def _update(self):
         self.clock.tick(FPS)
@@ -128,8 +134,15 @@ class TetrisApp:
                 thumb_open = hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y
                 if thumb_open and is_rotation_pose(hand_landmarks.landmark):
                     result, index_x_pixel, index_y_pixel = detect_L(hand_landmarks.landmark, w, h)
-                    if result == "L vers la droite":
+                    if result == "L vers la droite" and time.time() - self.last_rotation_time >= self.rotation_delay:
                         cv2.putText(frame, "Rotation droite", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        self.tetris.tetromino.rotate()
+                        self.last_rotation_time = time.time()
+
+                    elif result == "L vers la gauche" and time.time() - self.last_rotation_time >= self.rotation_delay:
+                        cv2.putText(frame, "Rotation gauche", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        self.tetris.tetromino.rotate()
+                        self.last_rotation_time = time.time()
 
                 index_x = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x
                 index_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
@@ -179,20 +192,6 @@ class TetrisApp:
                 mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
         cv2.imshow("Hand Gesture Recognition", frame)
-
-    def run(self):
-        while True:
-            self._handle_events()
-            self._update()
-            self.detect_gestures()
-            self._draw()
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.cap.release()
-        cv2.destroyAllWindows()
-
 
 if __name__ == '__main__':
     TetrisApp().run()
