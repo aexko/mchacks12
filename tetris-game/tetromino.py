@@ -8,18 +8,19 @@ class Block(pg.sprite.Sprite):
         self.tetromino = tetromino
         self.position = vec(position) + INIT_POS_OFFSET
         self.alive = True
+        self.next_position = vec(position) + NEXT_POSITION_OFFSET
 
         super().__init__(tetromino.tetris.sprite_group)
         self.image = tetromino.image
         self.rect = self.image.get_rect()
-
 
     def is_alive(self):
         if not self.alive:
             self.kill()
 
     def set_rect_position(self):
-        self.rect.topleft = self.position * TILE_SIZE
+        position = [self.next_position, self.position][self.tetromino.current]
+        self.rect.topleft = position * TILE_SIZE
 
     def is_collide(self, pos):
         x, y = int(pos.x), int(pos.y)
@@ -39,13 +40,13 @@ class Block(pg.sprite.Sprite):
 
 
 class Tetromino:
-    def __init__(self, tetris):
+    def __init__(self, tetris, current=True):
         self.tetris = tetris
         self.shape = random.choice(list(TETROMINOES.keys()))
         self.image = random.choice(tetris.app.images)
         self.blocks = [Block(self, position) for position in TETROMINOES[self.shape]]
         self.landing = False
-
+        self.current = current
 
     def is_collide(self, block_positions):
         return any(map(Block.is_collide, self.blocks, block_positions))

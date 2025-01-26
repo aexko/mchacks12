@@ -1,9 +1,7 @@
+import pathlib
 import sys
 
-import pygame as pg
-import pathlib
-
-from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL, SPRITE_DIR_PATH, TILE_SIZE, WIN_RES, BACKGROUND_COLOR
+from settings import *
 from tetris import Tetris
 
 
@@ -19,7 +17,6 @@ class TetrisApp:
     def _initialize_pygame(self):
         pg.init()
         pg.display.set_caption('Tetris')
-
 
     def load_img(self):
         files = [item for item in pathlib.Path(SPRITE_DIR_PATH).rglob('*.png') if item.is_file()]
