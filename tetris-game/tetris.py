@@ -66,5 +66,5 @@ class Tetris:
         self.sprite_group.update()
 
     def draw(self):
-        self.draw_grid()
+        # self.draw_grid()
         self.sprite_group.draw(self.app.screen)

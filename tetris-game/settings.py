@@ -32,3 +32,5 @@ MOVE_DIRECTIONS = {'LEFT': vec(-1, 0), 'RIGHT': vec(1, 0), 'DOWN': vec(0, 1)}
 
 ANIMATION_INTERVAL = 400  # ms
 BOOST_INTERVAL = 15  # ms
+
+SPRITE_DIR_PATH = 'assets'

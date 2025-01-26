@@ -1,8 +1,9 @@
 import sys
 
 import pygame as pg
+import pathlib
 
-from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL
+from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL, SPRITE_DIR_PATH, TILE_SIZE
 from tetris import Tetris
 
 
@@ -11,12 +12,20 @@ class TetrisApp:
         self._initialize_pygame()
         self.screen = pg.display.set_mode(FIELD_RES)
         self.clock = pg.time.Clock()
+        self.images = self.load_img()
         self.tetris = Tetris(self)
         self.set_timer()
 
     def _initialize_pygame(self):
         pg.init()
         pg.display.set_caption('Tetris')
+
+
+    def load_img(self):
+        files = [item for item in pathlib.Path(SPRITE_DIR_PATH).rglob('*.png') if item.is_file()]
+        images = [pg.image.load(file).convert_alpha() for file in files]
+        images = [pg.transform.scale(image, (TILE_SIZE, TILE_SIZE)) for image in images]
+        return images
 
     def run(self):
         while True:
