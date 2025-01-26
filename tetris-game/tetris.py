@@ -54,6 +54,16 @@ class Tetris:
                              (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
                               TILE_SIZE), 1)
 
+    def control(self, pressed_key):
+        if pressed_key == pg.K_LEFT:
+            self.tetromino.move(direction='LEFT')
+        elif pressed_key == pg.K_RIGHT:
+            self.tetromino.move(direction='RIGHT')
+        elif pressed_key == pg.K_UP:
+            self.tetromino.rotate()
+        elif pressed_key == pg.K_DOWN:
+            self.boost = True
+
     def check_landing(self):
         if self.tetromino.landing:
             if self.is_game_over():

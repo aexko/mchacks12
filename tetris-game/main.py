@@ -83,6 +83,8 @@ class TetrisApp:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self._quit_game()
+            elif event.type == pg.KEYDOWN:
+                self.tetris.control(pressed_key=event.key)
             elif event.type == self.user_event:
                 self.anim_trigger = True
             elif event.type == self.boost_event:
