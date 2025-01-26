@@ -2,15 +2,29 @@ import random
 import pygame as pg
 from settings import *
 
+# Liste des couleurs possibles pour les formes de tétromino
+BLOCK_COLORS = {
+    'I': 'cyan',
+    'O': 'yellow',
+    'T': 'purple',
+    'L': 'orange',
+    'J': 'blue',
+    'S': 'green',
+    'Z': 'red',
+}
+
 class Block(pg.sprite.Sprite):
-    def __init__(self, tetromino, position):
+    def __init__(self, tetromino, position, color):
         self.tetromino = tetromino
         self.position = vec(position) + INIT_POS_OFFSET
         self.alive = True
 
+        # Utiliser la couleur du tétromino (passée en paramètre)
+        self.color = color
+
         super().__init__(tetromino.tetris.sprite_group)
         self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.image.fill('red')
+        self.image.fill(self.color)  # Appliquer la couleur choisie au bloc
         self.rect = self.image.get_rect()
         self.rect.topleft = self.position * TILE_SIZE
 
@@ -33,15 +47,27 @@ class Block(pg.sprite.Sprite):
         self.is_collide(self.position)
         self.is_collide(self.position + MOVE_DIRECTIONS['DOWN'])
 
-
 class Tetromino:
     def __init__(self, tetris):
         self.tetris = tetris
-        self.shape = random.choice(list(TETROMINOES.keys()))
-        self.blocks = [Block(self, pos) for pos in TETROMINOES[self.shape]]
+        self.shape = random.choice(list(TETROMINOES.keys()))  # Choisir une forme aléatoire
+        
+        # Choisir une couleur unique pour la forme
+        self.color = BLOCK_COLORS[self.shape]  # Récupérer la couleur pour cette forme spécifique
+        
+        # Créer des blocs avec la même couleur pour tout le tétromino
+        self.blocks = [Block(self, pos, self.color) for pos in TETROMINOES[self.shape]]
+        
         self.landing = False
 
+        # Gestion du délai de descente (accélération progressive)
+        self.last_move_time = pg.time.get_ticks()  # Temps du dernier mouvement
+        self.move_delay = 1000  # Initialement, un délai plus long entre les mouvements
+        self.acceleration = 10  # La vitesse d'accélération, diminuer le délai progressivement
+        self.min_move_delay = 50  # Limite minimale du délai (vitesse maximale)
+
     def is_collide(self, block_positions):
+        # Vérifier s'il y a une collision avec l'emplacement des blocs
         return any(map(Block.is_collide, self.blocks, block_positions))
 
     def rotate(self):
@@ -64,4 +90,16 @@ class Tetromino:
             self.landing = True
 
     def update(self):
-        self.move(direction='DOWN')
+        current_time = pg.time.get_ticks()
+
+        # Vérifier si le délai est écoulé avant de déplacer le bloc vers le bas
+        if current_time - self.last_move_time >= self.move_delay:
+            # Effectuer le mouvement vers le bas
+            self.move(direction='DOWN')
+            self.last_move_time = current_time  # Mettre à jour le temps du dernier mouvement
+
+            # Accélérer la descente (réduire le délai entre les mouvements)
+            if self.move_delay > self.min_move_delay:
+                self.move_delay -= self.acceleration  # Réduire le délai pour augmenter la vitesse
+            else:
+                self.move_delay = self.min_move_delay  # Ne pas descendre plus vite que la vitesse minimale

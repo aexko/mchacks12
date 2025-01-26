@@ -38,13 +38,8 @@ def is_rotation_pose(landmarks):
                             landmarks[20].y > landmarks[18].y)
     return thumb_open and index_open and other_fingers_closed
 
-# Fonction pour détecter l'index vers le bas
-def is_index_down(landmarks):
-    return landmarks[8].y > landmarks[6].y
-
 # Fonction pour détecter un poing fermé
 def is_fist(landmarks):
-    # Si tous les doigts sont fermés, on considère que c'est un poing
     return is_thumb_and_other_fingers_closed(landmarks)
 
 # Fonction pour déterminer la direction du "L"
@@ -92,6 +87,11 @@ class TetrisApp:
         self.left_block_time = 0
         self.right_block_time = 0
         self.translation_delay = 0.5  # Delay for translation (seconds)
+
+        # Temps du dernier geste de rotation
+        self.last_rotation_time = time.time()
+        self.rotation_delay = 1  # Temps minimal entre chaque rotation (en secondes)
+        self.is_L_position = False  # Flag pour indiquer si "L" est maintenu
 
     def set_timer(self):
         self.user_event = pg.USEREVENT + 0
@@ -158,24 +158,29 @@ class TetrisApp:
                 thumb_open = hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y
                 if thumb_open and is_rotation_pose(hand_landmarks.landmark):
                     result, index_x_pixel, index_y_pixel = detect_L(hand_landmarks.landmark, w, h)
-                    if result == "L vers la droite":
-                        cv2.putText(frame, "Rotation droite", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    
+                    # Si la position L est maintenue
+                    if result == "L vers la droite" or result == "L vers la gauche":
+                        # Si suffisamment de temps s'est écoulé depuis la dernière rotation
+                        if time.time() - self.last_rotation_time >= self.rotation_delay:
+                            cv2.putText(frame, "Rotation", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                            self.tetris.tetromino.rotate()  # Rotation
+                            self.last_rotation_time = time.time()  # Mettre à jour le temps de la dernière rotation
+                        self.is_L_position = True
+                    else:
+                        self.is_L_position = False
 
+                # Détection de la descente rapide par un poing fermé
+                if is_fist(hand_landmarks.landmark):  # Poing fermé
+                    cv2.putText(frame, "Descente rapide", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    self.drop_speed = 100  # Réduire la vitesse de descente pour descente rapide
+
+                # Détection des mouvements gauche/droite
                 index_x = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x
                 index_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
                 index_x_pixel = int(index_x * w)
                 index_y_pixel = int(index_y * h)
 
-                # Fonctionnalité de descente
-                if is_fist(hand_landmarks.landmark):  # Poing fermé
-                    cv2.putText(frame, "Descente complète", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    self.tetris.tetromino.move(direction='DOWN', full_drop=True)  # Descente immédiate
-
-                elif is_index_down(hand_landmarks.landmark):  # Index vers le bas
-                    cv2.putText(frame, "Descente d'un bloc", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    self.tetris.tetromino.move(direction='DOWN')  # Descente d'un bloc
-
-                # Détection des mouvements gauche/droite
                 if line_x_1 < index_x_pixel < line_x_2:
                     self.in_middle_block = True
                     self.movement_done = False
@@ -194,7 +199,6 @@ class TetrisApp:
                         cv2.putText(frame, "Déplacement vers la gauche", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
                         self.movement_done = True
                         self.in_middle_block = False
-
 
                 # Translation check based on time spent in the left or right block
                 if time.time() - self.left_block_time >= self.translation_delay:
