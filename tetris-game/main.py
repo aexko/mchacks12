@@ -22,8 +22,6 @@ class TetrisApp:
         self.set_timer()
         self.text = Text(self)
 
-
-
         # Vitesse de descente initiale
         self.drop_speed = 1000  # vitesse normale de descente
         self.min_drop_speed = 500  # vitesse minimale de descente
@@ -59,9 +57,11 @@ class TetrisApp:
         pg.display.set_caption('Tetris')
 
     def load_img(self):
-        files = [item for item in pathlib.Path(SPRITE_PATH).rglob('*.png') if item.is_file()]
+        files = [item for item in pathlib.Path(SPRITE_PATH).rglob('*.png') if
+                 item.is_file()]
         images = [pg.image.load(file).convert_alpha() for file in files]
-        images = [pg.transform.scale(image, (TILE_SIZE, TILE_SIZE)) for image in images]
+        images = [pg.transform.scale(image, (TILE_SIZE, TILE_SIZE)) for image in
+                  images]
         return images
 
     def run(self):
@@ -83,8 +83,6 @@ class TetrisApp:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self._quit_game()
-            elif event.type == pg.KEYDOWN:
-                self.tetris.control(pressed_key=event.key)
             elif event.type == self.user_event:
                 self.anim_trigger = True
             elif event.type == self.boost_event:
@@ -136,43 +134,56 @@ class TetrisApp:
                 if is_thumb_and_other_fingers_closed(hand_landmarks.landmark):
                     continue
 
-                thumb_open = hand_landmarks.landmark[4].y < hand_landmarks.landmark[3].y
+                thumb_open = hand_landmarks.landmark[4].y < \
+                             hand_landmarks.landmark[3].y
                 if thumb_open and is_rotation_pose(hand_landmarks.landmark):
-                    result, index_x_pixel, index_y_pixel = detect_L(hand_landmarks.landmark, w, h)
+                    result, index_x_pixel, index_y_pixel = detect_L(
+                        hand_landmarks.landmark, w, h)
                     if result == "L vers la droite" and time.time() - self.last_rotation_time >= self.rotation_delay:
-                        cv2.putText(frame, "Rotation droite", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.putText(frame, "Rotation droite", (50, 50),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                         self.tetris.tetromino.rotate()
                         self.last_rotation_time = time.time()
 
                     elif result == "L vers la gauche" and time.time() - self.last_rotation_time >= self.rotation_delay:
-                        cv2.putText(frame, "Rotation gauche", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                        cv2.putText(frame, "Rotation gauche", (50, 50),
+                                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                         self.tetris.tetromino.rotate()
                         self.last_rotation_time = time.time()
 
-                index_x = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x
-                index_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
+                index_x = hand_landmarks.landmark[
+                    mp_hands.HandLandmark.INDEX_FINGER_TIP].x
+                index_y = hand_landmarks.landmark[
+                    mp_hands.HandLandmark.INDEX_FINGER_TIP].y
                 index_x_pixel = int(index_x * w)
                 index_y_pixel = int(index_y * h)
 
                 # Fonctionnalité de descente
                 if is_fist(hand_landmarks.landmark):  # Poing fermé
-                    cv2.putText(frame, "Descente complète", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    self.tetris.tetromino.move(direction='DOWN', full_drop=True)  # Descente immédiate
+                    cv2.putText(frame, "Descente complète", (50, 200),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    self.tetris.tetromino.move(direction='DOWN',
+                                               full_drop=True)  # Descente immédiate
 
-                elif is_index_down(hand_landmarks.landmark):  # Index vers le bas
-                    cv2.putText(frame, "Descente d'un bloc", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    self.tetris.tetromino.move(direction='DOWN')  # Descente d'un bloc
+                elif is_index_down(
+                        hand_landmarks.landmark):  # Index vers le bas
+                    cv2.putText(frame, "Descente d'un bloc", (50, 50),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    self.tetris.tetromino.move(
+                        direction='DOWN')  # Descente d'un bloc
 
                 # Détection des mouvements gauche/droite
                 if line_x_1 < index_x_pixel < line_x_2:
                     self.in_middle_block = True
                     self.movement_done = False
-                    cv2.putText(frame, "Dans le centre", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                    cv2.putText(frame, "Dans le centre", (50, 150),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
                 elif index_x_pixel < line_x_1:
                     self.right_block_time = time.time()
                     if self.in_middle_block and not self.movement_done:
-                        cv2.putText(frame, "Déplacement vers la droite", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        cv2.putText(frame, "Déplacement vers la droite",
+                                    (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
                                     (255, 0, 0), 2)
                         self.movement_done = True
                         self.in_middle_block = False
@@ -180,23 +191,26 @@ class TetrisApp:
                 elif index_x_pixel > line_x_2:
                     self.left_block_time = time.time()
                     if self.in_middle_block and not self.movement_done:
-                        cv2.putText(frame, "Déplacement vers la gauche", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        cv2.putText(frame, "Déplacement vers la gauche",
+                                    (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1,
                                     (0, 0, 255), 2)
                         self.movement_done = True
                         self.in_middle_block = False
 
                 # Translation check based on time spent in the left or right block
                 if time.time() - self.left_block_time >= self.translation_delay:
-                    self.tetris.tetromino.move(direction='LEFT')
+                    self.tetris.tetromino.move(direction='RIGHT')
                     self.left_block_time = time.time()
 
                 if time.time() - self.right_block_time >= self.translation_delay:
-                    self.tetris.tetromino.move(direction='RIGHT')
+                    self.tetris.tetromino.move(direction='LEFT')
                     self.right_block_time = time.time()
 
-                mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+                mp_drawing.draw_landmarks(frame, hand_landmarks,
+                                          mp_hands.HAND_CONNECTIONS)
 
         cv2.imshow("Hand Gesture Recognition", frame)
+
 
 if __name__ == '__main__':
     TetrisApp().run()

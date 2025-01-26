@@ -3,6 +3,7 @@ from tetromino import Tetromino
 from camera import *
 import pygame.freetype as ft
 
+
 class Tetris:
     def __init__(self, app):
         self.app = app
@@ -11,7 +12,6 @@ class Tetris:
         self.tetromino = Tetromino(self)
         self.next_tetromino = Tetromino(self, current=False)
         self.boost = False
-
         self.score = 0
         self.full_lines = 0
         self.points_per_lines = {0: 0, 1: 1000, 2: 3000, 3: 7000, 4: 15000}
@@ -51,17 +51,8 @@ class Tetris:
         for x in range(FIELD_W):
             for y in range(FIELD_H):
                 pg.draw.rect(self.app.screen, 'white',
-                             (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), 1)
-
-    def control(self, pressed_key):
-        if pressed_key == pg.K_LEFT:
-            self.tetromino.move(direction='LEFT')
-        elif pressed_key == pg.K_RIGHT:
-            self.tetromino.move(direction='RIGHT')
-        elif pressed_key == pg.K_UP:
-            self.tetromino.rotate()
-        elif is_index_down:
-            self.boost = True
+                             (x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
+                              TILE_SIZE), 1)
 
     def check_landing(self):
         if self.tetromino.landing:
@@ -92,25 +83,24 @@ class Tetris:
         # self.draw_grid()
         self.sprite_group.draw(self.app.screen)
 
+
 class Text:
-        def __init__(self, app):
-            self.app = app
-            self.font = ft.Font(FONT_PATH)
+    def __init__(self, app):
+        self.app = app
+        self.font = ft.Font(FONT_PATH)
 
-
-        def draw(self):
-            print('score', self.app.tetris.score)
-            self.font.render_to(self.app.screen, (WIN_W * 0.595, WIN_H * 0.02),
-                                text='TETRIS', fgcolor='white',
-                                size=TILE_SIZE * 1.65, bgcolor='black')
-            self.font.render_to(self.app.screen, (WIN_W * 0.65, WIN_H * 0.22),
-                                text='next block', fgcolor='white',
-                                size=TILE_SIZE * 1.4, bgcolor='black')
-            self.font.render_to(self.app.screen, (WIN_W * 0.64, WIN_H * 0.67),
-                                text='score', fgcolor='white',
-                                size=TILE_SIZE * 1.4, bgcolor='black')
-            self.font.render_to(self.app.screen, (WIN_W * 0.64, WIN_H * 0.8),
-                                text=f'{self.app.tetris.score}',
-                                fgcolor='white',
-                                size=TILE_SIZE * 1.8)
-
+    def draw(self):
+        print('score', self.app.tetris.score)
+        self.font.render_to(self.app.screen, (WIN_W * 0.6, WIN_H * 0.21),
+                            text='TETRAWAVE', fgcolor='white',
+                            size=TILE_SIZE)
+        self.font.render_to(self.app.screen, (WIN_W * 0.72, WIN_H * 0.55),
+                            text='next', fgcolor='white',
+                            size=TILE_SIZE)
+        self.font.render_to(self.app.screen, (WIN_W * 0.705, WIN_H * 0.67),
+                            text='score', fgcolor='white',
+                            size=TILE_SIZE)
+        self.font.render_to(self.app.screen, (WIN_W * 0.775, WIN_H * 0.8),
+                            text=f'{self.app.tetris.score}',
+                            fgcolor='white',
+                            size=TILE_SIZE)

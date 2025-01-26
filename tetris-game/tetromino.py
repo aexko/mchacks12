@@ -44,7 +44,8 @@ class Tetromino:
         self.tetris = tetris
         self.shape = random.choice(list(TETROMINOES.keys()))
         self.image = random.choice(tetris.app.images)
-        self.blocks = [Block(self, position) for position in TETROMINOES[self.shape]]
+        self.blocks = [Block(self, position) for position in
+                       TETROMINOES[self.shape]]
         self.landing = False
         self.current = current
 
@@ -61,7 +62,8 @@ class Tetromino:
 
     def move(self, direction):
         move_direction = MOVE_DIRECTIONS[direction]
-        new_block_positions = [block.position + move_direction for block in self.blocks]
+        new_block_positions = [block.position + move_direction for block in
+                               self.blocks]
         is_collide = self.is_collide(new_block_positions)
 
         if not is_collide:
