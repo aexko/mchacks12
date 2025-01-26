@@ -3,14 +3,14 @@ import sys
 import pygame as pg
 import pathlib
 
-from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL, SPRITE_DIR_PATH, TILE_SIZE
+from settings import FIELD_RES, FPS, FIELD_COLOR, ANIMATION_INTERVAL, BOOST_INTERVAL, SPRITE_DIR_PATH, TILE_SIZE, WIN_RES, BACKGROUND_COLOR
 from tetris import Tetris
 
 
 class TetrisApp:
     def __init__(self):
         self._initialize_pygame()
-        self.screen = pg.display.set_mode(FIELD_RES)
+        self.screen = pg.display.set_mode(WIN_RES)
         self.clock = pg.time.Clock()
         self.images = self.load_img()
         self.tetris = Tetris(self)
@@ -59,7 +59,8 @@ class TetrisApp:
         self.tetris.update()
 
     def _draw(self):
-        self.screen.fill(FIELD_COLOR)
+        self.screen.fill(color=BACKGROUND_COLOR)
+        self.screen.fill(color=FIELD_COLOR, rect=(0, 0, *FIELD_RES))
         self.tetris.draw()
         pg.display.flip()
 
