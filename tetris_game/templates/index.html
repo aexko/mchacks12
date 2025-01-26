@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Game</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Tetris Game</h1>
+    <canvas id="tetrisCanvas" width="500" height="800" style="border:1px solid black;"></canvas>
+
+    <script>
+        const canvas = document.getElementById('tetrisCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Connect to the server via Socket.IO
+        const socket = io();
+
+        // Listen for frame data from the server
+        socket.on('frame', (data) => {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw each block in the frame data
+            data.forEach(block => {
+                ctx.fillStyle = block.color;
+                ctx.fillRect(block.x, block.y, 50, 50); // Adjust block size if needed
+            });
+        });
+    </script>
+</body>
+</html>
