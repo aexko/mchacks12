@@ -6,7 +6,6 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
 
-
 # Fonction pour déterminer si la main est ouverte ou fermée
 def is_hand_open(landmarks):
     thumb_open = landmarks[4].y < landmarks[3].y
