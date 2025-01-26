@@ -1,4 +1,5 @@
 import random
+import time
 
 from settings import *
 
@@ -25,11 +26,6 @@ class Block(pg.sprite.Sprite):
                 y < 0 or not self.tetromino.tetris.field_array[y][x]):
             return False
         return True
-
-    def sfx_run(self):
-        self.image = self.sfx_image
-        self.pos.y -= self.sfx_speed
-        self.image = pg.transform.rotate(self.image, pg.time.get_ticks() * self.sfx_speed)
 
     def rotate(self, pivot_pos):
         translated = self.position - pivot_pos
