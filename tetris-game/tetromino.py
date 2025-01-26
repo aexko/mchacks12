@@ -84,11 +84,17 @@ class Tetromino:
         new_block_positions = [block.position + move_direction for block in self.blocks]
         is_collide = self.is_collide(new_block_positions)
 
+        # Si le tétromino touche un autre bloc ou la limite du bas
         if not is_collide:
             for block in self.blocks:
                 block.position += move_direction
         elif direction == 'DOWN':
             self.landing = True
+
+            # Vérifier si les blocs ont atteint le sommet de la grille
+            if any(block.position.y < 0 for block in self.blocks):  # Si un bloc touche le haut
+                self.tetris.game_over()  # Appeler une fonction pour redémarrer ou terminer le jeu
+
 
     def update(self):
         current_time = pg.time.get_ticks()

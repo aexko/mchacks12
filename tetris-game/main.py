@@ -93,6 +93,10 @@ class TetrisApp:
         self.rotation_delay = 1  # Temps minimal entre chaque rotation (en secondes)
         self.is_L_position = False  # Flag pour indiquer si "L" est maintenu
 
+        # Nouveau flag pour désactiver la rotation et la translation
+        self.is_fast_drop = False
+        self.is_rotating = False  # Flag pour vérifier si la rotation est en cours
+
     def set_timer(self):
         self.user_event = pg.USEREVENT + 0
         pg.time.set_timer(self.user_event, ANIMATION_INTERVAL)
@@ -167,47 +171,58 @@ class TetrisApp:
                             self.tetris.tetromino.rotate()  # Rotation
                             self.last_rotation_time = time.time()  # Mettre à jour le temps de la dernière rotation
                         self.is_L_position = True
+                        self.is_rotating = True  # Rotation en cours
                     else:
                         self.is_L_position = False
+                        self.is_rotating = False  # Rotation terminée
 
-                # Détection de la descente rapide par un poing fermé
-                if is_fist(hand_landmarks.landmark):  # Poing fermé
-                    cv2.putText(frame, "Descente rapide", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                    self.drop_speed = 100  # Réduire la vitesse de descente pour descente rapide
-
-                # Détection des mouvements gauche/droite
-                index_x = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x
+                # Détection de la descente rapide par la main allant vers le bas
+                wrist_y = hand_landmarks.landmark[0].y
                 index_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
-                index_x_pixel = int(index_x * w)
-                index_y_pixel = int(index_y * h)
+                
+                ##########FONCTION POUR DESCENDRE VITE AVEC DOIGT ICI ALEXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX************
+                # Si la main est orientée vers le bas (index et poignet plus bas)
+                if index_y > wrist_y:
+                    cv2.putText(frame, "Descente rapide", (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    self.drop_speed = 1  # Réduire la vitesse de descente pour descente rapide
+                    self.is_fast_drop = True  # Activer le mode de descente rapide
+                else:
+                    self.is_fast_drop = False  # Désactiver le mode de descente rapide
 
-                if line_x_1 < index_x_pixel < line_x_2:
-                    self.in_middle_block = True
-                    self.movement_done = False
-                    cv2.putText(frame, "Dans le centre", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+                # Détection des mouvements gauche/droite (ne se produit que si descente rapide n'est pas activée et que la rotation n'est pas en cours)
+                if not self.is_fast_drop and not self.is_rotating:
+                    index_x = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x
+                    index_y = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y
+                    index_x_pixel = int(index_x * w)
+                    index_y_pixel = int(index_y * h)
 
-                elif index_x_pixel < line_x_1:
-                    self.right_block_time = time.time()
-                    if self.in_middle_block and not self.movement_done:
-                        cv2.putText(frame, "Déplacement vers la droite", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-                        self.movement_done = True
-                        self.in_middle_block = False
+                    if line_x_1 < index_x_pixel < line_x_2:
+                        self.in_middle_block = True
+                        self.movement_done = False
+                        cv2.putText(frame, "Dans le centre", (50, 150), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
-                elif index_x_pixel > line_x_2:
-                    self.left_block_time = time.time()
-                    if self.in_middle_block and not self.movement_done:
-                        cv2.putText(frame, "Déplacement vers la gauche", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-                        self.movement_done = True
-                        self.in_middle_block = False
+                    elif index_x_pixel < line_x_1:
+                        self.right_block_time = time.time()
+                        if self.in_middle_block and not self.movement_done:
+                            cv2.putText(frame, "Déplacement vers la droite", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                            self.movement_done = True
+                            self.in_middle_block = False
 
-                # Translation check based on time spent in the left or right block
-                if time.time() - self.left_block_time >= self.translation_delay:
-                    self.tetris.tetromino.move(direction='LEFT')
-                    self.left_block_time = time.time()
+                    elif index_x_pixel > line_x_2:
+                        self.left_block_time = time.time()
+                        if self.in_middle_block and not self.movement_done:
+                            cv2.putText(frame, "Déplacement vers la gauche", (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                            self.movement_done = True
+                            self.in_middle_block = False
 
-                if time.time() - self.right_block_time >= self.translation_delay:
-                    self.tetris.tetromino.move(direction='RIGHT')
-                    self.right_block_time = time.time()
+                    # Translation check based on time spent in the left or right block
+                    if time.time() - self.left_block_time >= self.translation_delay:
+                        self.tetris.tetromino.move(direction='LEFT')
+                        self.left_block_time = time.time()
+
+                    if time.time() - self.right_block_time >= self.translation_delay:
+                        self.tetris.tetromino.move(direction='RIGHT')
+                        self.right_block_time = time.time()
 
                 mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
@@ -225,6 +240,7 @@ class TetrisApp:
 
         self.cap.release()
         cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     TetrisApp().run()
