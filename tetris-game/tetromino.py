@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from settings import *
+from settings import *  # Assurez-vous que les constantes comme TILE_SIZE, FIELD_W, FIELD_H sont bien définies dans settings.py
 
 # Liste des couleurs possibles pour les formes de tétromino
 BLOCK_COLORS = {
@@ -60,11 +60,12 @@ class Tetromino:
         
         self.landing = False
 
-        # Gestion du délai de descente (accélération progressive)
+        # Délai de mouvement et variables d'accélération
+        self.move_delay = 1000  # Temps en millisecondes (1 seconde)
+        self.min_move_delay = 100  # Délai minimum (vitesse maximale)
+        self.acceleration = 10  # L'accélération, diminue le délai à chaque mouvement
+
         self.last_move_time = pg.time.get_ticks()  # Temps du dernier mouvement
-        self.move_delay = 1000  # Initialement, un délai plus long entre les mouvements
-        self.acceleration = 10  # La vitesse d'accélération, diminuer le délai progressivement
-        self.min_move_delay = 50  # Limite minimale du délai (vitesse maximale)
 
     def is_collide(self, block_positions):
         # Vérifier s'il y a une collision avec l'emplacement des blocs
