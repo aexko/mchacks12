@@ -1,5 +1,6 @@
 from settings import *
 from tetromino import Tetromino
+from camera import *
 
 
 class Tetris:
@@ -49,7 +50,7 @@ class Tetris:
             self.tetromino.move(direction='RIGHT')
         elif pressed_key == pg.K_UP:
             self.tetromino.rotate()
-        elif pressed_key == pg.K_DOWN:
+        elif is_index_down:
             self.boost = True
 
     def check_landing(self):
