@@ -1,4 +1,4 @@
-# tetrawave
+# Tetrawave
 
 # How to run the game
 
